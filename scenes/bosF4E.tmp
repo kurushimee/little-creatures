@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3 uid="uid://0pbadw0cnk6x"]
+
+[ext_resource type="Script" path="res://scripts/boss.gd" id="1_0xd3g"]
+[ext_resource type="Texture2D" uid="uid://bygki3e2huv2d" path="res://sprites/boss-template.png" id="2_xkk48"]
+[ext_resource type="Script" path="res://scripts/health.gd" id="3_eawki"]
+[ext_resource type="AudioStream" uid="uid://5yk43iy3ls26" path="res://audio/boss-hurt.wav" id="4_7s05h"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_37w7o"]
+size = Vector2(32, 32)
+
+[node name="Boss" type="Area2D"]
+collision_mask = 2
+script = ExtResource("1_0xd3g")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_xkk48")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_37w7o")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("3_eawki")
+max = 1000.0
+
+[node name="HurtSound" type="AudioStreamPlayer" parent="Health"]
+stream = ExtResource("4_7s05h")
+volume_db = -5.0
+max_polyphony = 5

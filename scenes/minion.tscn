@@ -1,0 +1,40 @@
+[gd_scene load_steps=8 format=3 uid="uid://c3t3pno73vkgt"]
+
+[ext_resource type="Script" path="res://scripts/minion.gd" id="1_rfjpu"]
+[ext_resource type="Texture2D" uid="uid://vqxu2ri0j6gc" path="res://sprites/minion.png" id="2_88i0k"]
+[ext_resource type="Script" path="res://scripts/trail.gd" id="2_aevfb"]
+[ext_resource type="PackedScene" uid="uid://dquphjws4q3dq" path="res://scenes/explosion_effect.tscn" id="2_bo560"]
+
+[sub_resource type="Curve" id="Curve_vk15c"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_fvlg4"]
+colors = PackedColorArray(0.427451, 0.501961, 0.980392, 1, 0.682353, 0.886275, 1, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v3tjw"]
+size = Vector2(9, 7)
+
+[node name="Minion" type="Area2D"]
+collision_layer = 2
+script = ExtResource("1_rfjpu")
+explosion = ExtResource("2_bo560")
+speed = 500.0
+
+[node name="Line2D" type="Line2D" parent="."]
+width = 4.0
+width_curve = SubResource("Curve_vk15c")
+default_color = Color(0.682353, 0.886275, 1, 0.501961)
+gradient = SubResource("Gradient_fvlg4")
+script = ExtResource("2_aevfb")
+length = 10
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(2, 2, 2, 1)
+rotation = 1.5708
+texture = ExtResource("2_88i0k")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_v3tjw")
+
+[connection signal="area_entered" from="." to="." method="_on_boss_hit"]

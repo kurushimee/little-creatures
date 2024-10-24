@@ -1,0 +1,128 @@
+[gd_scene load_steps=9 format=3 uid="uid://1pqul1s4j4aw"]
+
+[ext_resource type="Texture2D" uid="uid://o3sohfd3q34y" path="res://sprites/space.png" id="1_kon15"]
+[ext_resource type="Script" path="res://scripts/camera_shake.gd" id="1_lrunt"]
+[ext_resource type="Script" path="res://scripts/scrolling_background.gd" id="2_75hrg"]
+[ext_resource type="PackedScene" uid="uid://0pbadw0cnk6x" path="res://scenes/boss.tscn" id="5_ocfov"]
+[ext_resource type="Script" path="res://scripts/minion_spawner.gd" id="6_m1b40"]
+[ext_resource type="PackedScene" uid="uid://c3t3pno73vkgt" path="res://scenes/minion.tscn" id="6_v07xl"]
+[ext_resource type="Script" path="res://scripts/ui.gd" id="7_244ma"]
+
+[sub_resource type="Environment" id="Environment_0380i"]
+background_mode = 3
+tonemap_mode = 3
+glow_enabled = true
+glow_levels/1 = 1.0
+glow_levels/2 = 1.0
+glow_levels/4 = 1.0
+glow_levels/6 = 1.0
+glow_levels/7 = 1.0
+glow_intensity = 0.3
+glow_blend_mode = 1
+glow_hdr_threshold = 1.5
+glow_hdr_luminance_cap = 2.0
+
+[node name="Main" type="Node"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+ignore_rotation = false
+position_smoothing_enabled = true
+rotation_smoothing_enabled = true
+script = ExtResource("1_lrunt")
+min_shake_strength = 5.0
+
+[node name="Background" type="ColorRect" parent="Camera2D"]
+custom_minimum_size = Vector2(1280, 720)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = -36.0
+offset_right = 1216.0
+offset_bottom = 684.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.121569, 0.0627451, 0.164706, 1)
+
+[node name="ScrollingBackground" type="Node2D" parent="Camera2D"]
+script = ExtResource("2_75hrg")
+scroll_speed = 50.0
+
+[node name="Sprite2D" type="Sprite2D" parent="Camera2D/ScrollingBackground"]
+texture = ExtResource("1_kon15")
+offset = Vector2(576, 324)
+
+[node name="Sprite2D2" type="Sprite2D" parent="Camera2D/ScrollingBackground"]
+position = Vector2(1280, 0)
+texture = ExtResource("1_kon15")
+offset = Vector2(576, 324)
+
+[node name="Boss" parent="." instance=ExtResource("5_ocfov")]
+position = Vector2(576, 324)
+
+[node name="MinionSpawner" type="Node" parent="." node_paths=PackedStringArray("current_boss")]
+script = ExtResource("6_m1b40")
+minion_scene = ExtResource("6_v07xl")
+current_boss = NodePath("../Boss")
+
+[node name="Timer" type="Timer" parent="MinionSpawner"]
+wait_time = 0.1
+autostart = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_0380i")
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("7_244ma")
+
+[node name="BossBarBg" type="ColorRect" parent="UI"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -360.0
+offset_top = 25.0
+offset_right = 360.0
+offset_bottom = 35.0
+grow_horizontal = 2
+color = Color(0.639216, 0.156863, 0.345098, 1)
+
+[node name="BossHealth" type="ColorRect" parent="UI"]
+modulate = Color(1.8, 1.8, 1.8, 1)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -360.0
+offset_top = 25.0
+offset_right = 360.0
+offset_bottom = 35.0
+grow_horizontal = 2
+color = Color(0.917647, 0.384314, 0.384314, 1)
+
+[node name="HealthHUD" type="Label" parent="UI"]
+modulate = Color(1.5, 1.5, 1.5, 1)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -73.0
+offset_top = 35.0
+offset_right = 73.0
+offset_bottom = 123.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.8, 0.258824, 0.368627, 1)
+theme_override_font_sizes/font_size = 65
+text = "1000"
+horizontal_alignment = 1
+
+[connection signal="timeout" from="MinionSpawner/Timer" to="MinionSpawner" method="spawn_minion"]
